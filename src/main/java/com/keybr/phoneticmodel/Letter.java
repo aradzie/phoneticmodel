@@ -1,69 +1,78 @@
 package com.keybr.phoneticmodel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 
 final class Letter {
 
-    static final Comparator<Letter> CMP_BY_FREQUENCY_DESC = (o1, o2) -> {
-        int i = o2.frequency - o1.frequency;
-        if (i == 0) {
-            return o1.index - o2.index;
-        }
-        return i;
-    };
+    static final Comparator<Letter> SORT_BY_INDEX =
+            Comparator.comparingInt((Letter letter) -> letter.index);
 
-    final int index;
+    static final Comparator<Letter> SORT_BY_FREQUENCY =
+            Comparator.comparingInt((Letter letter) -> letter.frequency).reversed();
 
-    final char character;
+    private final int index;
 
-    int frequency;
+    private int frequency;
 
-    Letter(int index, char character, int frequency) {
+    Letter(int index, int frequency) {
         this.index = index;
-        this.character = character;
         this.frequency = frequency;
     }
 
-    static void scaleFrequencies(Letter[] letters) {
-        int sum;
+    int index() {
+        return index;
+    }
 
-        // TODO Ensure that non-zero frequencies do not get scaled to zero.
+    int frequency() {
+        return frequency;
+    }
 
-        Arrays.sort(letters, Letter.CMP_BY_FREQUENCY_DESC);
+    static int sumFrequencies(Collection<Letter> letters) {
+        return letters.stream().mapToInt(letter -> letter.frequency).sum();
+    }
 
-        sum = sumFrequencies(letters);
-        // Scale frequencies so that their sum is 255.
-        for (var letter : letters) {
-            if (letter.frequency > 0) {
-                letter.frequency = Math.max(1, Math.round(255f / sum * letter.frequency));
-            }
+    static void scaleFrequencies(Collection<Letter> letters) {
+        if (!letters.isEmpty()) {
+            var sorted = new ArrayList<>(letters);
+            sorted.sort(SORT_BY_FREQUENCY);
+            scaleRough(sorted);
+            scaleFine(sorted);
         }
+    }
 
-        sum = sumFrequencies(letters);
-        if (sum > 255) {
+    private static void scaleRough(ArrayList<Letter> letters) {
+        int sum = sumFrequencies(letters);
+        for (var letter : letters) {
+            if (letter.frequency < 1) {
+                throw new IllegalArgumentException();
+            }
+            letter.frequency = Math.max(1, Math.round(255f / sum * letter.frequency));
+        }
+    }
+
+    private static void scaleFine(ArrayList<Letter> letters) {
+        int sum = sumFrequencies(letters);
+        while (sum > 255) {
             int i = 0;
-            while (sum > 255) {
-                letters[i].frequency--;
-                sum--;
+            while (sum > 255 && i < letters.size()) {
+                var letter = letters.get(i);
+                if (letter.frequency > 1) {
+                    letter.frequency--;
+                    sum--;
+                }
                 i++;
             }
         }
-        else if (sum < 255) {
+        while (sum < 255) {
             int i = 0;
-            while (sum < 255) {
-                letters[i].frequency++;
+            while (sum < 255 && i < letters.size()) {
+                var letter = letters.get(i);
+                letter.frequency++;
                 sum++;
                 i++;
             }
         }
-    }
-
-    static int sumFrequencies(Letter[] letters) {
-        int sum = 0;
-        for (var letter : letters) {
-            sum += letter.frequency;
-        }
-        return sum;
     }
 }

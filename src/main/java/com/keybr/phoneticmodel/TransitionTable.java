@@ -3,14 +3,12 @@ package com.keybr.phoneticmodel;
 import javax.json.Json;
 import javax.json.JsonValue;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
-import static java.lang.Character.toLowerCase;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class TransitionTable
@@ -60,33 +58,43 @@ final class TransitionTable
         this.frequencies = new int[chain.spread];
     }
 
-    void scan(CharSequence chars) {
-        for (int i = 0; i < chars.length(); i++) {
-            push(chars.charAt(i));
-        }
-    }
-
-    void scan(Reader reader)
-            throws IOException {
-        while (true) {
-            int ch = reader.read();
-            if (ch == -1) {
-                break;
+    void scan(CharSequence text) {
+        StringBuilder word = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char ch = Character.toLowerCase(text.charAt(i));
+            if (alphabet.indexOf(ch) < 0) {
+                ch = ' ';
             }
-            push(ch);
+            if (ch == ' ') {
+                push(word);
+                word.setLength(0);
+            }
+            else {
+                word.append(ch);
+            }
+        }
+        push(word);
+    }
+
+    void push(CharSequence word) {
+        if (word.length() >= 3) {
+            for (int i = 0; i < word.length(); i++) {
+                push(word.charAt(i));
+            }
+            push(' ');
         }
     }
 
-    void push(int ch) {
-        if (ch < 0) {
-            throw new IllegalArgumentException();
-        }
-        int index = alphabet.indexOf(toLowerCase(ch));
+    void push(char ch) {
+        int index = alphabet.indexOf(ch);
         if (index < 0) {
-            index = 0;
+            throw new IllegalArgumentException();
         }
         if (chain.push(index)) {
             frequencies[chain.toOffset()] += 1;
+        }
+        if (ch == ' ') {
+            chain.clear();
         }
     }
 
@@ -94,8 +102,12 @@ final class TransitionTable
         return frequencies.length;
     }
 
-    int valueAt(int index) {
+    int get(int index) {
         return frequencies[index];
+    }
+
+    void set(int index, int value) {
+        frequencies[index] = value;
     }
 
     @Override

@@ -62,9 +62,9 @@ public final class TransitionTableTest {
         assertThat(table.toJson()).isEqualTo(Json.createArrayBuilder().build());
 
         table.push('a');
-        table.push('B');
+        table.push('b');
         table.push('c');
-        table.push('A');
+        table.push('a');
 
         assertThat(table.toJson())
                 .isEqualTo(
@@ -82,9 +82,9 @@ public final class TransitionTableTest {
         assertThat(table.toJson()).isEqualTo(Json.createArrayBuilder().build());
 
         table.push('a');
-        table.push('B');
+        table.push('b');
         table.push('c');
-        table.push('A');
+        table.push('a');
         table.push('b');
 
         assertThat(table.toJson())
@@ -104,9 +104,9 @@ public final class TransitionTableTest {
         assertThat(table.toJson()).isEqualTo(Json.createArrayBuilder().build());
 
         table.push('a');
-        table.push('B');
+        table.push('b');
         table.push('c');
-        table.push('A');
+        table.push('a');
         table.push('b');
 
         assertThat(table.toJson())

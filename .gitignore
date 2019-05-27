@@ -1,13 +1,6 @@
 *.data
 *.json
 
-english.txt
-french.txt
-german.txt
-italian.txt
-portuguese.txt
-russian.txt
-
 target/
 *.class
 *.jar

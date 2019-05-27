@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class ChainTest {
 
     @Test
-    public void test() {
+    public void toOffset() {
         var chain = new Chain(3, 4);
 
         assertThat(chain.spread).isEqualTo(64);
@@ -41,7 +41,7 @@ public final class ChainTest {
     }
 
     @Test
-    public void testFromOffset() {
+    public void fromOffset() {
         var chain = new Chain(3, 4);
 
         assertThat(chain.fromOffset(0)).isEqualTo(new int[] {0, 0, 0});

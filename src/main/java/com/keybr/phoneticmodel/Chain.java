@@ -28,6 +28,10 @@ final class Chain {
         this.chain = new int[order];
     }
 
+    void clear() {
+        Arrays.fill(chain, 0);
+    }
+
     boolean push(int value) {
         if (value < 0 || value >= size) {
             throw new IllegalArgumentException();
