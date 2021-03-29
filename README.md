@@ -2,9 +2,9 @@
 
 This is a tool which generates natural language phonetic model 
 for [keybr.com](https://www.keybr.com). It takes a text file as 
-input and produces either JSON or compressed binary file as output.
+input and produces either JSON or a compressed binary file as output.
 
-- Produce compressed binary file:
+- Produce a compressed binary file:
 
 ```bash
 ./bin/genmodel.sh \
@@ -13,7 +13,7 @@ input and produces either JSON or compressed binary file as output.
     < english.txt
 ```
 
-- Produce JSON file:
+- Produce a JSON file:
 
 ```bash 
 ./bin/genmodel.sh \
