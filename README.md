@@ -8,7 +8,7 @@ input and produces either JSON or a compressed binary file as output.
 
 ```bash
 ./bin/genmodel.sh \
-    --language=english \
+    --alphabet=' abcdefghijklmnopqrstuvwxyz' \
     --order=4 \
     < english.txt
 ```
@@ -17,7 +17,7 @@ input and produces either JSON or a compressed binary file as output.
 
 ```bash 
 ./bin/genmodel.sh \
-    --language=english \
+    --alphabet=' abcdefghijklmnopqrstuvwxyz' \
     --order=2 \
     --json \
     < english.txt

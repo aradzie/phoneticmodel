@@ -18,12 +18,12 @@ public final class GeneratePhoneticModel
         implements Callable<Object> {
 
     @Option(
-            names = {"-l", "--language"},
+            names = {"-a", "--alphabet"},
             required = true,
-            converter = LanguageConverter.class,
-            description = "Language name."
+            converter = AlphabetConverter.class,
+            description = "Alphabet letters."
     )
-    private Language language;
+    private Alphabet alphabet;
 
     @Option(
             names = {"-o", "--order"},
@@ -40,8 +40,7 @@ public final class GeneratePhoneticModel
 
     @Option(
             names = {"-f", "--file"},
-            description = "Output JSON or binary file. " +
-                    "If not specified, output file name will be derived from language name."
+            description = "Output file name."
     )
     private Path outputFile;
 
@@ -58,14 +57,14 @@ public final class GeneratePhoneticModel
         Path out = outputFile;
         if (out == null) {
             if (json) {
-                out = Paths.get(String.format("%s-order%d.json", language, order));
+                out = Paths.get("output.json");
             }
             else {
-                out = Paths.get(String.format("%s.data", language));
+                out = Paths.get("output.data");
             }
         }
         var input = Normalizer.normalize(getInput(), Normalizer.Form.NFC);
-        var table = new TransitionTable(order, language.alphabet());
+        var table = new TransitionTable(order, alphabet.alphabet());
         table.scan(input);
         if (json) {
             table.writeJson(out);
@@ -100,13 +99,13 @@ public final class GeneratePhoneticModel
         return result.toString();
     }
 
-    final static class LanguageConverter
-            implements ITypeConverter<Language> {
+    final static class AlphabetConverter
+            implements ITypeConverter<Alphabet> {
 
         @Override
-        public Language convert(String value)
+        public Alphabet convert(String value)
                 throws Exception {
-            return Language.from(value);
+            return new Alphabet(value);
         }
     }
 }
